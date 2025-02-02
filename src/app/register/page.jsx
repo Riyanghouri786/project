@@ -16,25 +16,31 @@ export default function Register() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
+    // Check if the password is less than 6 characters
+    if (formData.password.length < 6) {
+      toast.error("Please enter a 6-digit password");
+      return; // Stop form submission if password is too short
+    }
+  
     toast.dismiss();
     toast.loading("Registering...");
-
+  
     try {
       const res = await fetch("/api/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
-
+  
       toast.dismiss();
       const data = await res.json();
-
+  
       if (!res.ok) {
         toast.error(data.error || "Something went wrong");
         return;
       }
-
+  
       toast.success("User registered successfully!");
       router.push("/login");
     } catch (err) {
@@ -42,6 +48,7 @@ export default function Register() {
       toast.error("Server error. Please try again later.");
     }
   };
+  
 
   return (
     <div
