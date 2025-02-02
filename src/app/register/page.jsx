@@ -54,7 +54,7 @@ export default function Register() {
       <Toaster />
 
       <motion.div
-        className="relative flex w-full max-w-4xl bg-white shadow-lg rounded-2xl z-10 overflow-hidden"
+        className="relative flex w-full max-w-4xl mx-3 bg-white shadow-lg rounded-2xl z-10 overflow-hidden"
         initial={{ opacity: 0, scale: 0.8 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.5 }}
@@ -137,7 +137,17 @@ export default function Register() {
           >
             Register
           </motion.button>
+          <p className="mt-6 text-center text-sm text-gray-600">
+           Already have an account?{" "}
+          <span
+            onClick={() => router.push("/login")}
+            className="text-blue-600 cursor-pointer hover:underline"
+          >
+            Login here
+          </span>
+        </p>
         </form>
+       
       </motion.div>
     </div>
   );

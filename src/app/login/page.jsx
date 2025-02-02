@@ -47,7 +47,7 @@ export default function LoginPage() {
       <Toaster />
 
       <motion.form
-        className="relative w-full max-w-md p-8 bg-white shadow-2xl rounded-2xl z-10 border border-gray-200"
+        className="relative w-full max-w-md mx-3 p-8 bg-white shadow-2xl rounded-2xl z-10 border border-gray-200"
         onSubmit={handleLogin}
         initial={{ opacity: 0, scale: 0.8 }}
         animate={{ opacity: 1, scale: 1 }}
@@ -95,6 +95,16 @@ export default function LoginPage() {
         >
           Login
         </motion.button>
+
+        <p className="mt-6 text-center text-sm text-gray-600">
+          Don't have an account?{" "}
+          <span
+            onClick={() => router.push("/register")}
+            className="text-blue-600 cursor-pointer hover:underline"
+          >
+            Register here
+          </span>
+        </p>
       </motion.form>
     </div>
   );
