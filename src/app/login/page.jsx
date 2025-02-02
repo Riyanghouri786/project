@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { toast } from "react-hot-toast";
-import { Toaster } from "react-hot-toast";
+import { toast, Toaster } from "react-hot-toast";
+import { motion } from "framer-motion";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -12,7 +12,6 @@ export default function LoginPage() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-
     toast.dismiss(); // Clear previous toasts
     toast.loading("Logging in...");
 
@@ -22,7 +21,7 @@ export default function LoginPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
       });
-toast.dismiss();
+      toast.dismiss();
 
       if (!res.ok) {
         const data = await res.json();
@@ -39,20 +38,27 @@ toast.dismiss();
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+    <div
+      className="flex items-center justify-center min-h-screen bg-cover bg-center relative"
+      style={{ backgroundImage: "url('https://www.zillowstatic.com/bedrock/app/uploads/sites/47/GA_ATL_PITTSBURGH_82772_161_RT-2_RT-5f7457-1440x960.jpg')" }}
+    >
+      <div className="absolute inset-0 bg-black opacity-50"></div>
 
+      <Toaster />
 
-<Toaster/>
-
-        
-      <form
-        className="w-full max-w-md p-8 bg-white shadow-md rounded-xl"
+      <motion.form
+        className="relative w-full max-w-md p-8 bg-white shadow-2xl rounded-2xl z-10 border border-gray-200"
         onSubmit={handleLogin}
+        initial={{ opacity: 0, scale: 0.8 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.5 }}
       >
-        <h2 className="mb-4 text-2xl font-bold text-center">Login</h2>
+        <h2 className="mb-6 text-4xl font-extrabold text-center text-gray-800">
+          Welcome Back!
+        </h2>
 
-        <div className="mb-4">
-          <label htmlFor="email" className="block text-sm font-medium">
+        <div className="mb-6">
+          <label htmlFor="email" className="block text-sm font-medium text-gray-700">
             Email
           </label>
           <input
@@ -60,14 +66,14 @@ toast.dismiss();
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full px-3 py-2 mt-1 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+            className="w-full px-4 py-3 mt-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent"
             placeholder="Enter your email"
             required
           />
         </div>
 
-        <div className="mb-6">
-          <label htmlFor="password" className="block text-sm font-medium">
+        <div className="mb-8">
+          <label htmlFor="password" className="block text-sm font-medium text-gray-700">
             Password
           </label>
           <input
@@ -75,19 +81,21 @@ toast.dismiss();
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full px-3 py-2 mt-1 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+            className="w-full px-4 py-3 mt-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent"
             placeholder="Enter your password"
             required
           />
         </div>
 
-        <button
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
           type="submit"
-          className="w-full py-2 text-white bg-blue-500 rounded-md hover:bg-blue-600"
+          className="w-full py-3 text-white bg-gradient-to-r from-blue-500 to-blue-600 rounded-md hover:from-blue-600 hover:to-blue-700 shadow-md"
         >
           Login
-        </button>
-      </form>
+        </motion.button>
+      </motion.form>
     </div>
   );
 }

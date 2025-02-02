@@ -5,9 +5,9 @@ import connectDB from "../../../../lib/db";
 
 export async function POST(req) {
   try {
-    const { name, email, password } = await req.json();
+    const { name, email, password ,phone} = await req.json();
 
-    if (!name || !email || !password) {
+    if (!name || !email || !password ||!phone) {
       return NextResponse.json({ error: "All fields are required" }, { status: 400 });
     }
 
@@ -19,7 +19,7 @@ export async function POST(req) {
       return NextResponse.json({ error: "User already exists" }, { status: 409 });
     }
 
-    const user = new User({ name, email, password });
+    const user = new User({ name, email, password,phone });
     await user.save();
 
     return NextResponse.json({ message: "User registered successfully" }, { status: 201 });
