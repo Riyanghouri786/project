@@ -1,46 +1,101 @@
 "use client";
 
-import { useState } from "react";
+import { useState ,useEffect} from "react";
 import { useRouter } from "next/navigation";
 import { toast, Toaster } from "react-hot-toast";
 import { motion } from "framer-motion";
 
 export default function Register() {
   const [formData, setFormData] = useState({ name: "", email: "", password: "", phone: "" });
+  const [otp, setOtp] = useState("");
+  const [otpSent, setOtpSent] = useState(false); // Flag to track if OTP has been sent
+  const [storedOtp, setStoredOtp] = useState(""); // Store OTP temporarily
   const router = useRouter();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
+   
+
+  useEffect(() => {
+  
+  }, [storedOtp, otpSent]); // This will run when storedOtp or otpSent changes
+  
+
+
+  const handleSendOtp = async () => {
+    toast.loading("Sending OTP...");
+    try {
+      const res = await fetch("/api/message", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email: formData.email }),
+      });
+  
+      const data = await res.json();
+      toast.dismiss();
+  
+      if (res.ok) {
+        setOtpSent(true);
+        setStoredOtp(data.otp); // Store OTP temporarily
+
+        if (data.opt !== otp) {
+          toast.success("Code Send");
+          return;
+        }
+          console.log(otpSent);
+          
+        // Log the updated state values using useEffect or after state change
+        console.log("OTP sent:", data.otp);
+        
+        // Logs after state change
+        setTimeout(() => {
+          console.log("Stored OTP:", storedOtp); // It will now log the updated OTP
+          console.log("otpSent:", otpSent); // Will be true
+        }, 100);
+  
+        // toast.success("OTP sent to your email");
+      } else {
+        toast.error(data.error || "Failed to send OTP");
+      }
+    } catch (err) {
+      toast.dismiss();
+      toast.error("Server error");
+    }
+  };
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
-    // Check if the password is less than 6 characters
+
+    // Check if password is too short
     if (formData.password.length < 6) {
       toast.error("Please enter a 6-digit password");
       return; // Stop form submission if password is too short
     }
-  
-    toast.dismiss();
+
+    // Validate OTP
+   
+
     toast.loading("Registering...");
-  
     try {
       const res = await fetch("/api/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
-  
+
       toast.dismiss();
       const data = await res.json();
-  
+
       if (!res.ok) {
         toast.error(data.error || "Something went wrong");
         return;
       }
-  
+
       toast.success("User registered successfully!");
       router.push("/login");
     } catch (err) {
@@ -48,7 +103,10 @@ export default function Register() {
       toast.error("Server error. Please try again later.");
     }
   };
-  
+
+  const handleVerifyOtp = (e) => {
+    setOtp(e.target.value); // Handle OTP input change
+  };
 
   return (
     <div
@@ -118,7 +176,7 @@ export default function Register() {
               value={formData.phone}
               onChange={handleChange}
               className="w-full px-4 py-3 mt-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
-              placeholder="Enter your number"
+              placeholder="Enter your phone number"
               required
             />
           </div>
@@ -136,26 +194,71 @@ export default function Register() {
             />
           </div>
 
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            type="submit"
-            className="w-full py-3 text-white bg-blue-500 rounded-md hover:bg-blue-600"
-          >
-            Register
-          </motion.button>
+          {otpSent && (
+            <div className="mb-4">
+              <label className="block text-sm font-medium">OTP</label>
+              <input
+                type="text"
+                value={otp}
+                onChange={handleVerifyOtp} // Correctly bind OTP input change here
+                className="w-full px-4 py-3 mt-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+                placeholder="Enter OTP"
+                required
+              />
+            </div>
+          )}
+
+          {!otpSent ? (
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              type="button"
+              onClick={handleSendOtp}
+              className="w-full py-3 text-white bg-blue-500 rounded-md hover:bg-blue-600"
+            >
+              Send OTP
+            </motion.button>
+          ) : (
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              type="submit"
+              className="w-full py-3 text-white bg-blue-500 rounded-md hover:bg-blue-600"
+            >
+              Verify OTP and Register
+            </motion.button>
+          )}
+
           <p className="mt-6 text-center text-sm text-gray-600">
-           Already have an account?{" "}
-          <span
-            onClick={() => router.push("/login")}
-            className="text-blue-600 cursor-pointer hover:underline"
-          >
-            Login here
-          </span>
-        </p>
+            Already have an account?{" "}
+            <span
+              onClick={() => router.push("/login")}
+              className="text-blue-600 cursor-pointer hover:underline"
+            >
+              Login here
+            </span>
+          </p>
         </form>
-       
       </motion.div>
     </div>
   );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
