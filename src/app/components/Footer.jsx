@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
 const Footer = () => {
-    const { pathname } = usePathname();
+    const pathname  = usePathname();
   return (
     <footer className={`bg-blue-600 ${pathname === "/login" || pathname === "/register" ? "hidden" : ""} text-white py-8`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
